@@ -1,3 +1,4 @@
+extern crate tui;
 use std::io;
 use tui::{backend::CrosstermBackend, Terminal};
 
