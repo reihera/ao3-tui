@@ -4,7 +4,7 @@ use ratatui::{
     DefaultTerminal, Frame,
     style::Stylize,
     text::Line,
-    
+    layout::{Constraint, Layout},
     widgets::{Block, Paragraph, List},
 };
 
@@ -24,8 +24,11 @@ pub struct App {
 }
 
 impl App {
+
+	
+
     /// Construct a new instance of [`App`].
-    pub fn new() -> Self {
+    pub fn new() -> Self { 
         Self::default()
     }
 
@@ -33,32 +36,34 @@ impl App {
     pub fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
         self.running = true;
         while self.running {
-            terminal.draw(|frame| self.reader(frame), self.sidebar(frame))?;
+            terminal.draw(|frame| {
+            self.reader(frame);
+            self.sidebar(frame);
+			})?;	
             self.handle_crossterm_events()?;
-        }
-        Ok(())
-    }
-
+			
+		}
+ 		Ok(())
+ 	}
 	// reader frame
     fn reader(&mut self, frame: &mut Frame) {
         let title = Line::from("Reader")
             .bold()
             .left_aligned();
-        let text = "Reader";
-        frame.render_widget(
-            Paragraph::new(text)
-                .block(Block::bordered().title(title))
-                .left_aligned(),
-            frame.area(),
-        )
+        let text = "insert smut here";
+        let reader = Paragraph::new(text).block(Block::bordered().title(title));
+        frame.render_widget(reader, frame.area())
     }
 	//sidebar frame
     fn sidebar(&mut self, frame: &mut Frame) {
     	let title = Line::from("sidebar")
     		.bold()
     		.left_aligned();
-    	let list = List::new(["placeholder 1", "placeholder 2"]);
-    	frame.render_widget(list, area)
+
+    	let sidebar = List::new(["placeholder 1", "placeholder 2"]).block(Block::bordered().title(title));
+		frame.area();
+    	frame.render_widget(sidebar, frame.area())
+    	
     }
  
     /// Reads the crossterm events and updates the state of [`App`].
@@ -90,5 +95,4 @@ impl App {
     fn quit(&mut self) {
         self.running = false;
     }
-
 }
