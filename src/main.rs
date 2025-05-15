@@ -2,10 +2,11 @@ use color_eyre::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 use ratatui::{
     DefaultTerminal, Frame,
-    style::Stylize,
+    style::{Style, Stylize},
     text::Line,
-    layout::{Constraint, Layout},
-    widgets::{Block, Paragraph, List},
+    layout::{Constraint, Layout, Direction},
+    widgets::{Block, Paragraph, List, Tabs}
+
 };
 
 fn main() -> color_eyre::Result<()> {
@@ -37,34 +38,44 @@ impl App {
         self.running = true;
         while self.running {
             terminal.draw(|frame| {
-            self.reader(frame);
-            self.sidebar(frame);
+            self.render(frame);
 			})?;	
             self.handle_crossterm_events()?;
 			
 		}
  		Ok(())
  	}
-	// reader frame
-    fn reader(&mut self, frame: &mut Frame) {
-        let title = Line::from("Reader")
-            .bold()
-            .left_aligned();
-        let text = "insert smut here";
-        let reader = Paragraph::new(text).block(Block::bordered().title(title));
-        frame.render_widget(reader, frame.area())
-    }
-	//sidebar frame
-    fn sidebar(&mut self, frame: &mut Frame) {
-    	let title = Line::from("sidebar")
-    		.bold()
-    		.left_aligned();
 
-    	let sidebar = List::new(["placeholder 1", "placeholder 2"]).block(Block::bordered().title(title));
-		frame.area();
-    	frame.render_widget(sidebar, frame.area())
-    	
-    }
+
+
+    
+	//render
+    fn render(&mut self, frame: &mut Frame) {
+		use Constraint::{Length, Min};
+		let layout = Layout::default()
+			.direction(Direction::Horizontal)
+			.constraints(vec![
+				Constraint::Percentage(25),
+				Constraint::Percentage(100),
+			])
+			.split(frame.area());
+   
+
+		frame.render_widget(
+			Tabs::new(vec!["Reader", "Changelog"])
+				.select(2)
+				.block(Block::bordered().title("fuck off"))
+				.highlight_style(Style::default().red()),
+
+			layout[1]
+		);
+    	frame.render_widget(
+    		List::new(["placeholder 1", "placeholder 2"])
+    			.block(Block::bordered().title("sidebar")),
+    		layout[0]
+    		)
+    	}
+    
  
     /// Reads the crossterm events and updates the state of [`App`].
     ///
