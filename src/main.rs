@@ -5,7 +5,7 @@ use ratatui::{
     style::{Style, Stylize},
     text::Line,
     layout::{Constraint, Layout, Direction},
-    widgets::{Block, Paragraph, List, Tabs}
+    widgets::{Block, Paragraph, List, Tabs, Borders}
 
 };
 
@@ -51,29 +51,57 @@ impl App {
     
 	//render
     fn render(&mut self, frame: &mut Frame) {
-		use Constraint::{Length, Min};
-		let layout = Layout::default()
+		
+    			
+		let vertical = Layout::default()
+			.direction(Direction::Vertical)
+			.constraints(vec![
+				Constraint::Percentage(10),
+				Constraint::Percentage(75),
+			])
+			.split(frame.area());
+		let horizontal = Layout::default()
 			.direction(Direction::Horizontal)
 			.constraints(vec![
 				Constraint::Percentage(25),
-				Constraint::Percentage(100),
+				Constraint::Percentage(75),
 			])
-			.split(frame.area());
-   
+			.split(vertical[1]);
+		let search = Layout::default()
+			.direction(Direction::Vertical)
+  			.constraints(vec![
+  				Constraint::Percentage(75),
+  			])
+			.split(horizontal[1]);
+//			.split(vertical[0]);
+
+
+
 
 		frame.render_widget(
 			Tabs::new(vec!["Reader", "Changelog"])
 				.select(2)
-				.block(Block::bordered().title("fuck off"))
-				.highlight_style(Style::default().red()),
 
-			layout[1]
-		);
+				.highlight_style(Style::default().red())
+				.block(Block::bordered().title("tabs")),
+				
+			horizontal[1]);
+			
     	frame.render_widget(
     		List::new(["placeholder 1", "placeholder 2"])
     			.block(Block::bordered().title("sidebar")),
-    		layout[0]
-    		)
+    		horizontal[0]
+    		);
+
+		frame.render_widget(
+			Block::new()
+				.title("Search")
+				.borders(Borders::ALL),
+				
+			search[0]);
+			
+
+
     	}
     
  
