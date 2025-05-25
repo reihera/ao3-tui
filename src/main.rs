@@ -2,7 +2,7 @@ use color_eyre::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 use ratatui::{
     DefaultTerminal, Frame,
-    style::{Style, Stylize},
+    style::{Style, Stylize, Color},
     text::Line,
     layout::{Constraint, Layout, Direction},
     widgets::{Block, Paragraph, List, Tabs, Borders}
@@ -57,7 +57,7 @@ impl App {
 			.direction(Direction::Vertical)
 			.constraints(vec![
 				Constraint::Percentage(10),
-				Constraint::Percentage(75),
+				Constraint::Percentage(90),
 			])
 			.split(frame.area());
 		let horizontal = Layout::default()
@@ -67,22 +67,38 @@ impl App {
 				Constraint::Percentage(75),
 			])
 			.split(vertical[1]);
-		let search = Layout::default()
+		let sidebar = Layout::default()
+			.direction(Direction::Vertical)
+			.constraints(vec![
+				Constraint::Percentage(75),
+				Constraint::Percentage(25),
+			])
+			.split(horizontal[0]);
+		let search0 = Layout::default()
 			.direction(Direction::Vertical)
   			.constraints(vec![
-  				Constraint::Percentage(75),
+  				Constraint::Percentage(100),
   			])
-			.split(horizontal[1]);
-//			.split(vertical[0]);
-
-
-
+			.split(vertical[0]);
+		let search1 = Layout::default()
+			.direction(Direction::Horizontal)
+			.constraints(vec![
+				Constraint::Percentage(25),
+				Constraint::Percentage(75),
+			])
+			.split(search0[0]);
+		let account = Layout::default()
+			.direction(Direction::Horizontal)
+			.constraints(vec![
+				Constraint::Percentage(100),
+			])
+			.split(search1[0]);
 
 		frame.render_widget(
 			Tabs::new(vec!["Reader", "Changelog"])
-				.select(2)
+				.select(0)
 
-				.highlight_style(Style::default().red())
+				.highlight_style(Style::default().fg(Color::White).bg(Color::Red))
 				.block(Block::bordered().title("tabs")),
 				
 			horizontal[1]);
@@ -90,7 +106,7 @@ impl App {
     	frame.render_widget(
     		List::new(["placeholder 1", "placeholder 2"])
     			.block(Block::bordered().title("sidebar")),
-    		horizontal[0]
+    		sidebar[0]
     		);
 
 		frame.render_widget(
@@ -98,9 +114,18 @@ impl App {
 				.title("Search")
 				.borders(Borders::ALL),
 				
-			search[0]);
-			
-
+			search1[1]);
+		frame.render_widget(
+			Block::new()
+				.title("Account")
+				.borders(Borders::ALL),
+				
+			account[0]);
+		frame.render_widget(
+			Block::new()
+				.title("Information")
+				.borders(Borders::ALL),
+			sidebar[1]);
 
     	}
     
