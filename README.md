@@ -15,7 +15,7 @@ I wanted to read fanfiction in the terminal, so I made that.
 
 ## License
 
-Copyright (c) Aera Goereich <reihera@proton.me>
+Copyright (c) Reihera Goereich <reihera@proton.me>
 
 This project is licensed under the MIT license ([LICENSE] or <http://opensource.org/licenses/MIT>)
 
